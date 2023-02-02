@@ -1,4 +1,4 @@
-namespace DwitTech.DotNetCoreApp.Core.Tests
+namespace DwitTech.NotificationService.Core.Tests
 {
     public class UnitTest1
     {

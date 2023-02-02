@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DwitTech.DotNetCoreApp.Core.Exceptions
+namespace DwitTech.NotificationService.Core.Exceptions
 {
     internal abstract class BaseException
     {

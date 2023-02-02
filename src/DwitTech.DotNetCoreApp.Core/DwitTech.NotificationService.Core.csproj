@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DwitTech.DotNetCoreApp.Data\DwitTech.DotNetCoreApp.Data.csproj" />
+    <ProjectReference Include="..\DwitTech.DotNetCoreApp.Data\DwitTech.NotificationService.Data.csproj" />
   </ItemGroup>
 
 </Project>

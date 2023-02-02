@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace DwitTech.DotNetCoreApp.Data.Context
+namespace DwitTech.NotificationService.Data.Context
 {
-    public class DefaultDbContext : DbContext
+    public class NotificationDbContext : DbContext
     {
-        public DefaultDbContext(DbContextOptions options) : base(options)
+        public NotificationDbContext(DbContextOptions options) : base(options)
         {
         }
 

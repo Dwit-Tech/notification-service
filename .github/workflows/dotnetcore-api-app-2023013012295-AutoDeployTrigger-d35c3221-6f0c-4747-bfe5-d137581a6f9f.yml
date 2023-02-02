@@ -1,4 +1,4 @@
-name: Trigger auto deployment for dotnetcore-api-app-2023013012295
+name: Trigger auto deployment for notification-service-2023013012295
 
 # When this action will be executed
 on:
@@ -8,7 +8,7 @@ on:
       [ master ]
     paths:
     - '**'
-    - '.github/workflows/dotnetcore-api-app-2023013012295-AutoDeployTrigger-d35c3221-6f0c-4747-bfe5-d137581a6f9f.yml'
+    - '.github/workflows/notification-service-2023013012295-AutoDeployTrigger-d35c3221-6f0c-4747-bfe5-d137581a6f9f.yml'
 
   # Allow mannually trigger 
   workflow_dispatch:      
@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: dotnetcoreapi20230130123723.azurecr.io/dotnetcore-api-app-2023013012295:${{ github.sha }}
+          tags: dotnetcoreapi20230130123723.azurecr.io/notification-service-2023013012295:${{ github.sha }}
           file: ./Dockerfile
           context: ./
 

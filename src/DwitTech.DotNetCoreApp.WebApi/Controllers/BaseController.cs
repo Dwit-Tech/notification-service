@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DwitTech.DotNetCoreApp.WebApi.Controllers
+namespace DwitTech.NotificationService.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

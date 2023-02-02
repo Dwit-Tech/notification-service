@@ -1,7 +1,7 @@
-using DwitTech.DotNetCoreApp.Core.Dtos;
+using DwitTech.NotificationService.Core.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DwitTech.DotNetCoreApp.WebApi.Controllers
+namespace DwitTech.NotificationService.WebApi.Controllers
 {
     public class WeatherForecastController : BaseController
     {

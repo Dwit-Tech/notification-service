@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DwitTech.DotNetCoreApp.Core.Services
+namespace DwitTech.NotificationService.Core.Services
 {
     internal abstract class BaseService
     {

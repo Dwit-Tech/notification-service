@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DwitTech.DotNetCoreApp.Core.Enums
+namespace DwitTech.NotificationService.Core.Enums
 {
     public enum ResponseCode
     {
