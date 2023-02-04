@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>DwitTech.DotNetCoreApp.WebApi</RootNamespace>
+    <RootNamespace>DwitTech.NotificationService.WebApi</RootNamespace>
     <UserSecretsId>4b85aef6-9eee-4358-9027-2f921b1a3891</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DwitTech.DotNetCoreApp.Core\DwitTech.NotificationService.Core.csproj" />
+    <ProjectReference Include="..\DwitTech.NotificationService.Core\DwitTech.NotificationService.Core.csproj" />
   </ItemGroup>
 
 </Project>
