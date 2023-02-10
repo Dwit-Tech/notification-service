@@ -1,6 +1,5 @@
 ﻿using DwitTech.NotificationService.Core.Dtos;
 using DwitTech.NotificationService.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DwitTech.NotificationService.WebApi.Controllers
@@ -15,19 +14,6 @@ namespace DwitTech.NotificationService.WebApi.Controllers
         {
             _emailService = emailService;
         }
-
-        public IEmailService Get_emailService()
-        {
-            return _emailService;
-        }
-
-        /*[HttpGet]
-        public ActionResult GetAllEmails()
-        {
-            var allEmails = _emailService.GetAllEmails();
-
-            return Ok(allEmails);
-        }*/
 
         [HttpPost]
         public IActionResult SendEmail(EmailDto request)

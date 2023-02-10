@@ -5,11 +5,6 @@ using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace DwitTech.NotificationService.Core.Services
 {
     public class EmailService : IEmailService
@@ -21,6 +16,7 @@ namespace DwitTech.NotificationService.Core.Services
             _config = config;
         }
 
+        //implemented this to test my controller
         public void SendEmail(EmailDto request)
         {
             var email = new MimeMessage();

@@ -34,7 +34,7 @@ namespace DwitTech.NotificationService.WebApi
             builder.Services.AddSwaggerGenNewtonsoftSupport();
             builder.Services.AddHealthChecks();
             builder.Services.AddServices(builder.Configuration);
-            
+
             // Add service and create Policy with options
             builder.Services.AddCors(options =>
             {
