@@ -25,5 +25,7 @@ namespace DwitTech.NotificationService.Data.Entities
         public string Subject { get; set; }
 
         public string Body { get; set; }
+
+        public EmailStatus Status { get; set; }
     }
 }
