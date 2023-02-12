@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DwitTech.NotificationService.Core.Dtos
+namespace DwitTech.NotificationService.Data.Entities
 {
-    public class EmailDto
+    public class Email
     {
+        public int id { get; set; }
+
         [Required]
         public string From { get; set; }
 

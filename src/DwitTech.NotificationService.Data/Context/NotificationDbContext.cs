@@ -17,7 +17,7 @@ namespace DwitTech.NotificationService.Data.Context
         public NotificationDbContext(DbContextOptions<NotificationDbContext> options) : base(options)
         {
         }
-        public DbSet<EmailEntity> Entities { get; set; }
+        public DbSet<Email> Entities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

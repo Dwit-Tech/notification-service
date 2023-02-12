@@ -9,19 +9,5 @@ namespace DwitTech.NotificationService.Data.Repository
 {
     public class EmailRepo : IEmailRepo
     {
-        public IEnumerable<EmailEntity> Entities()
-        {
-            var entities = new List<EmailEntity> 
-            { 
-            };
-            return entities;
-        }
-
-        public EmailEntity GetEmailEntityById(int id)
-        {
-            return new EmailEntity 
-            {
-            };
-        }
     }
 }

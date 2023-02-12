@@ -9,7 +9,6 @@ namespace DwitTech.NotificationService.Data.Repository
 {
     internal interface IEmailRepo
     {
-        IEnumerable<EmailEntity> Entities();
-        EmailEntity GetEmailEntityById(int id);
+        
     }
 }

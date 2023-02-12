@@ -9,6 +9,6 @@ namespace DwitTech.NotificationService.Core.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(EmailDto request);
+        
     }
 }
