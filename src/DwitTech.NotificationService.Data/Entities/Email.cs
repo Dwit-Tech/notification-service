@@ -9,7 +9,6 @@ namespace DwitTech.NotificationService.Data.Entities
 {
     public class Email : BaseEntity
     {
-        public int Id { get; set; }
 
         [Required]
         public string From { get; set; }
