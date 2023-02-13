@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DwitTech.NotificationService.Data.Repository
 {
-    internal interface IEmailRepo
+    public interface IEmailRepo
     {
         
     }

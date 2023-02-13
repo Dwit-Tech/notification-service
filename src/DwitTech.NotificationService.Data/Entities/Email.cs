@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DwitTech.NotificationService.Data.Entities
 {
-    public class Email
+    public class Email : BaseEntity
     {
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string From { get; set; }

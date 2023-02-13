@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using DwitTech.NotificationService.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DwitTech.NotificationService.Core.Dtos
 {
-    public class EmailDto
+    public class EmailDto : Profile
     {
         [Required]
         public string From { get; set; }
@@ -23,5 +25,7 @@ namespace DwitTech.NotificationService.Core.Dtos
         public string Subject { get; set; }
 
         public string Body { get; set; }
+
+        public EmailStatus Status { get; set; }
     }
 }
