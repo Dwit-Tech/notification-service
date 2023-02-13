@@ -8,15 +8,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
+using DwitTech.NotificationService.Data.Entities;
 
 namespace DwitTech.NotificationService.Data.Context
 {
     public class NotificationDbContext : DbContext
     {
-        public NotificationDbContext(DbContextOptions options) : base(options)
+        public NotificationDbContext(DbContextOptions<NotificationDbContext> options) : base(options)
         {
         }
+        public DbSet<Email> Emails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
