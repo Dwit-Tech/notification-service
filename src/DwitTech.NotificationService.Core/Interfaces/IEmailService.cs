@@ -8,6 +8,6 @@ namespace DwitTech.NotificationService.Core.Interfaces
 {
     public interface IEmailService
     {
-        
+        bool SendEmail(string From, string To, string Subject, string Body, string CC="", string BCC="");
     }
 }
