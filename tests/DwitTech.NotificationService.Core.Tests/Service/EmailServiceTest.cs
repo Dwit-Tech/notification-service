@@ -26,7 +26,7 @@ namespace DwitTech.NotificationService.Core.Tests.Service
         
 
         [Theory]
-        [InlineData("","","","","","", true)]
+        [InlineData("me","jnr83@gmail.com","hi","testing","","", true)]
         public void SendEmail_ShouldReturn_BooleanResult(string From, string To, string Subject, string Body, string Cc, string BCc, bool expected)
         {
 
