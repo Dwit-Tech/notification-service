@@ -9,6 +9,9 @@ namespace DwitTech.NotificationService.Data.Repository
 {
     public interface IEmailRepo
     {
-        
+        void CreateEmail(Email email);
+        Email FindEmail(string email);
+        void UpdateEmailStatus(Email email, bool status);
+        bool SaveChanges();
     }
 }

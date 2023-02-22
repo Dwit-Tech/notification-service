@@ -24,6 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
             connectionString = connectionString.Replace("{DBUser}", configuration["DB_USERNAME"]);
             connectionString = connectionString.Replace("{DBPassword}", configuration["DB_PASSWORD"]);
 
+
             service.AddDbContext<NotificationDbContext>(opt =>
             {
                 opt.UseNpgsql(connectionString, c => c.CommandTimeout(120));

@@ -8,8 +8,8 @@ namespace DwitTech.NotificationService.WebApi.Controllers
 {
     public class EmailController : BaseController
     {
-        private readonly EmailService _emailService;
-        public EmailController(EmailService emailService)
+        private readonly IEmailService _emailService;
+        public EmailController(IEmailService emailService)
         {
             _emailService = emailService;
         }
@@ -19,7 +19,14 @@ namespace DwitTech.NotificationService.WebApi.Controllers
         public IActionResult SendEmail([FromBody] EmailDto MailMessage)
         {
 
-           var response =  _emailService.SendEmail(
+            var createResult = _emailService.CreateEmail(MailMessage);
+
+            if(createResult == null)
+            {
+                throw new ArgumentNullException("The supplied information appears to be null");
+            }
+
+            var response =  _emailService.SendEmail(
                                         MailMessage.From, 
                                         MailMessage.To, 
                                         MailMessage.Subject, 
@@ -27,6 +34,19 @@ namespace DwitTech.NotificationService.WebApi.Controllers
                                         MailMessage.Cc, 
                                         MailMessage.Bcc
                                         );
+
+            
+
+            if (response)
+            {
+                _emailService.UpdateEmailStatus(MailMessage, response);
+                return Ok(response);    
+            }
+            else
+            {
+                _emailService.UpdateEmailStatus(MailMessage, response);
+                return BadRequest(response);
+            }
         }
     }
 }

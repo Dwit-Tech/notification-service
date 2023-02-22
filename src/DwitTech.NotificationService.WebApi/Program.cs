@@ -1,3 +1,8 @@
+using DwitTech.NotificationService.Core.Interfaces;
+using DwitTech.NotificationService.Core.Services;
+using DwitTech.NotificationService.Data.Context;
+using DwitTech.NotificationService.Data.Repository;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 namespace DwitTech.NotificationService.WebApi
@@ -29,12 +34,15 @@ namespace DwitTech.NotificationService.WebApi
 
             builder.Services.AddDatabaseService(builder.Configuration);
 
-            builder.Services.AddEndpointsApiExplorer();
+            //builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGenNewtonsoftSupport();
             builder.Services.AddHealthChecks();
+            builder.Services.AddScoped<IEmailRepo, EmailRepo>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddServices(builder.Configuration);
 
+            
             // Add service and create Policy with options
             builder.Services.AddCors(options =>
             {
