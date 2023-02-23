@@ -16,37 +16,11 @@ namespace DwitTech.NotificationService.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult SendEmail([FromBody] EmailDto MailMessage)
+        public async Task<IActionResult> SendEmail([FromBody] EmailDto MailMessage)
         {
+           await _emailService.SendEmail(MailMessage.From,MailMessage.To, MailMessage.Subject, MailMessage.Body,MailMessage.Cc, MailMessage.Bcc);
+           return Ok("Email Sent");
 
-            var createResult = _emailService.CreateEmail(MailMessage);
-
-            if(createResult == null)
-            {
-                throw new ArgumentNullException("The supplied information appears to be null");
-            }
-
-            var response =  _emailService.SendEmail(
-                                        MailMessage.From, 
-                                        MailMessage.To, 
-                                        MailMessage.Subject, 
-                                        MailMessage.Body,
-                                        MailMessage.Cc, 
-                                        MailMessage.Bcc
-                                        );
-
-            
-
-            if (response)
-            {
-                _emailService.UpdateEmailStatus(MailMessage, response);
-                return Ok(response);    
-            }
-            else
-            {
-                _emailService.UpdateEmailStatus(MailMessage, response);
-                return BadRequest(response);
-            }
         }
     }
 }

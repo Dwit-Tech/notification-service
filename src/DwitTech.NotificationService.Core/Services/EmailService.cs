@@ -1,16 +1,9 @@
-﻿using DwitTech.NotificationService.Core.Dtos;
-using DwitTech.NotificationService.Core.Interfaces;
-using DwitTech.NotificationService.Data.Context;
+﻿using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Data.Entities;
 using DwitTech.NotificationService.Data.Repository;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Gmail.v1;
-using Google.Apis.Gmail.v1.Data;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog;
-using System.Net;
 using System.Net.Mail;
 
 namespace DwitTech.NotificationService.Core.Services
@@ -18,18 +11,24 @@ namespace DwitTech.NotificationService.Core.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
         private readonly IEmailRepo _emailRepo;
-        public EmailService(IConfiguration config, IEmailRepo emailRepo)
+        private readonly ILogger<EmailService> _logger;
+        public EmailService(IConfiguration config, IEmailRepo emailRepo, ILogger<EmailService> logger)
         {
             _config = config;
-            _emailRepo = emailRepo; 
+            _emailRepo = emailRepo;
+            _logger = logger;
         }
 
-        public bool SendEmail(string From, string To, string Subject, string Body, string Cc = "", string Bcc = "")
+        public async Task<bool> SendEmail(string From, string To, string Subject, string Body, string Cc = "", string Bcc = "")
         {
 
-            try
+            var emailModel = new Email { From = From, To = To, Subject = Subject, Body = Body, Cc = Cc , Bcc = Bcc  };
+
+            _emailRepo.CreateEmail(emailModel);
+            _logger.LogInformation(1, "The email has been inserted into the database");
+
+         try
             {
                 MailMessage mail = new MailMessage();
                 mail.To.Add(To);
@@ -38,18 +37,24 @@ namespace DwitTech.NotificationService.Core.Services
                 mail.Body = Body;
                 mail.IsBodyHtml = true;
                 SmtpClient smtp = new SmtpClient();
-                smtp.Port = 587;
+                smtp.Port = Int32.Parse(_config["GmailInfo:Port"]);
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
                 smtp.Host = _config["GmailInfo:Host"];
                 smtp.Credentials = new System.Net.NetworkCredential(_config["GmailInfo:Email"], _config["GmailInfo:AppPassword"]);
                 smtp.Send(mail);
+
+                _emailRepo.UpdateEmailStatus(emailModel, true);
+                _logger.LogInformation(2, "At this point the email status gets updated after successfully sending the email");
+
                 return true;
             }
             catch (Exception ex)
             {
 
-                logger.Error(ex);
+                
+                _emailRepo.UpdateEmailStatus(emailModel, false);
+                _logger.LogError(3, "This is the log that is called if for any reason the email sending process fails");
                 return false;   
             }
 
@@ -57,47 +62,6 @@ namespace DwitTech.NotificationService.Core.Services
              
         }
 
-        //public bool SaveEmail(EmailDto email)
-        //{
-            
-        //}
-
-        public Email FindEmail(string email)
-        {
-
-            var findEmail =  _emailRepo.FindEmail(email);
-
-            if(findEmail != null)
-            {
-                return findEmail;
-            }
-
-            return null;
-            
-        }
-
-        public void UpdateEmailStatus(EmailDto email, bool status)
-        {
-            var emailToBeSearched = email.To;
-            var findMailResult = this.FindEmail(emailToBeSearched);
-            _emailRepo.UpdateEmailStatus(findMailResult, status);
-        }
-
-        public EmailDto CreateEmail(EmailDto email)
-        {
-            var read = new Email {
-                From = email.From,
-                To = email.To,
-                Subject = email.Subject,
-                Body = email.Body,
-                Status = EmailStatus.Pending,
-                Cc = email.Cc,
-                Bcc = email.Bcc
-            };
-            _emailRepo.CreateEmail(read);
-            _emailRepo.SaveChanges();
-            return email;
-
-        }
+        
     }
 }

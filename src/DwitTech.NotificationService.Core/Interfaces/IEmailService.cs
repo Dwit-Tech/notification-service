@@ -10,10 +10,8 @@ namespace DwitTech.NotificationService.Core.Interfaces
 {
     public interface IEmailService
     {
-        bool SendEmail(string From, string To, string Subject, string Body,string CC="", string BCC="");
-       // bool SaveEmail(EmailDto email);
-        Email FindEmail(string email);
-        void UpdateEmailStatus(EmailDto email, bool status);
-        EmailDto CreateEmail(EmailDto email);
+        Task<bool> SendEmail(string From, string To, string Subject, string Body,string CC="", string BCC="");
+       
+
     }
 }
