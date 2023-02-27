@@ -13,53 +13,50 @@ namespace DwitTech.NotificationService.Data.Repository
     public class EmailRepo : IEmailRepo
     {
         private readonly NotificationDbContext _notificationDbContext;
+       
         public EmailRepo(NotificationDbContext notificationDbContext)
         {
             _notificationDbContext = notificationDbContext;
         }
 
-        public Email FindEmail(string email)
+        public async Task<bool> CreateEmail(Email email)
         {
-            return _notificationDbContext.Emails.FirstOrDefault(o => o.To == email);
-            
-        }
-
-        public void CreateEmail(Email email)
-        {
-            if(email == null)
-            {
+            if(email is null)
                 throw new ArgumentException(nameof(email));
+            try
+            {
+                _notificationDbContext.Emails.Add(email);
+                await _notificationDbContext.SaveChangesAsync();
+                return true;
+            }catch(NullReferenceException ex)
+            {
+                return false;
             }
-             _notificationDbContext.Emails.Add(email);
         }
 
-        public void UpdateEmailStatus(Email email, bool status)
+        public async Task UpdateEmailStatus(Email email, bool status)
         {
-            var emailModel = _notificationDbContext.Emails.FirstOrDefault(o => o.To == email.To);
+            var emailModel = _notificationDbContext.Emails.FirstOrDefault(o => o.Id == email.Id);
 
             if(emailModel != null)
             {
                 if(!status)
                 {
                     emailModel.Status = EmailStatus.Pending;
-                    this.SaveChanges();
+                   await _notificationDbContext.SaveChangesAsync();
                 }
 
 
                 if (status)
                 {
                     emailModel.Status = EmailStatus.Sent;
-                    this.SaveChanges();
+                    await _notificationDbContext.SaveChangesAsync();
                 }
 
             }
         }
 
-        public bool SaveChanges()
-        {
-            return (_notificationDbContext.SaveChanges() >= 0);
-        }
-
-       
+        
+        
     }
 }

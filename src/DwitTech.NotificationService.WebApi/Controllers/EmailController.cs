@@ -18,8 +18,17 @@ namespace DwitTech.NotificationService.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmail([FromBody] EmailDto MailMessage)
         {
-           await _emailService.SendEmail(MailMessage.From,MailMessage.To, MailMessage.Subject, MailMessage.Body,MailMessage.Cc, MailMessage.Bcc);
-           return Ok("Email Sent");
+
+
+            try
+            {
+                var response = await _emailService.SendEmail(MailMessage);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Something went wrong, due to {ex.Message}, please try again");
+            }
 
         }
     }

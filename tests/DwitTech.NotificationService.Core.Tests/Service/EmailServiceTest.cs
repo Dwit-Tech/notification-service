@@ -1,42 +1,75 @@
-﻿using DwitTech.NotificationService.Data.Context;
+﻿using DwitTech.NotificationService.Core.Dtos;
+using DwitTech.NotificationService.Core.Interfaces;
+using DwitTech.NotificationService.Core.Services;
+using DwitTech.NotificationService.Data.Context;
+using DwitTech.NotificationService.Data.Repository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+
+using Xunit.Sdk;
+
 namespace DwitTech.NotificationService.Core.Tests.Service
 {
-    public class EmailServiceTest : IDisposable
+    public class EmailServiceTest 
     {
-        private readonly NotificationDbContext _notificationDbContext;
-
-        public EmailServiceTest()
-        {
-            var options = new DbContextOptionsBuilder<NotificationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            _notificationDbContext = new NotificationDbContext(options);
-            _notificationDbContext.Database.EnsureCreated();
-
-            _notificationDbContext.SaveChanges();   
-        }
-
         
 
-        [Theory]
-        [InlineData("me","jnr83@gmail.com","hi","testing","","", true)]
-        public void SendEmail_ShouldReturn_BooleanResult(string From, string To, string Subject, string Body, string Cc, string BCc, bool expected)
+        [Fact]
+        public async Task SendEmail_ShouldReturn_BooleanResult()
         {
+
+            var options = new DbContextOptionsBuilder<NotificationDbContext>()
+               .UseInMemoryDatabase(Guid.NewGuid().ToString())
+               .Options;
+           
+
+            var mockDbContext = new Mock<NotificationDbContext>(options);
+           
+            var configuration = new Mock<IConfiguration>();
+            var iLogger = new Mock<ILogger<EmailService>>();
+            var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
+
+            var emailDto = new EmailDto { From = "test@gmail.com", To = "jokpo2565@gmail.com", Body = "test values", Subject = "Going",  Cc ="", Bcc="" };
+
+
+            IEmailService emailService = new EmailService(configuration.Object, emailRepo.Object, iLogger.Object);
+            var res = await emailService.SendEmail(emailDto);
+            
+
+            Assert.True(res);
+            
 
         }
 
-        public void Dispose()
+
+        [Fact]
+        public async Task SendEmail_Returns_AnExceptionOnFailure()
         {
-            _notificationDbContext.Database.EnsureDeleted();
-            _notificationDbContext.Dispose();
+
+            var options = new DbContextOptionsBuilder<NotificationDbContext>()
+               .UseInMemoryDatabase(Guid.NewGuid().ToString())
+               .Options;
+
+
+            var mockDbContext = new Mock<NotificationDbContext>(options);
+            var configuration = new Mock<IConfiguration>();
+            var iLogger = new Mock<ILogger<EmailService>>();
+            var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
+
+            var emailDto = new EmailDto { From = "test@gmail.com", To = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
+
+
+            IEmailService emailService = new EmailService(configuration.Object, emailRepo.Object, iLogger.Object);
+            
+            async Task actual() => await emailService.SendEmail(emailDto);
+
+            await Assert.ThrowsAsync<NullReferenceException>(actual);
+
         }
+
+
 
     }
 }

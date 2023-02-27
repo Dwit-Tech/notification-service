@@ -27,5 +27,6 @@ namespace DwitTech.NotificationService.Core.Dtos
         public string Body { get; set; }
 
         public EmailStatus Status { get; set; }
+
     }
 }
