@@ -1,4 +1,7 @@
-﻿using DwitTech.NotificationService.Data.Context;
+﻿using DwitTech.NotificationService.Core.Interfaces;
+using DwitTech.NotificationService.Core.Services;
+using DwitTech.NotificationService.Data.Context;
+using DwitTech.NotificationService.Data.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             },
             contextLifetime: ServiceLifetime.Scoped,
             optionsLifetime: ServiceLifetime.Scoped);
-
+            
 
             return service;
         }
@@ -43,6 +46,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
 
             service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            service.AddScoped<IEmailRepo, EmailRepo>();
+            service.AddScoped<IEmailService, EmailService>();
             return service;
         }
 

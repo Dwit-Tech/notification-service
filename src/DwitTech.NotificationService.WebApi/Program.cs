@@ -42,8 +42,9 @@ namespace DwitTech.NotificationService.WebApi
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGenNewtonsoftSupport();
             builder.Services.AddHealthChecks();
-            builder.Services.AddScoped<IEmailRepo, EmailRepo>();
-            builder.Services.AddScoped<IEmailService, EmailService>();
+            //builder.Services.AddScoped<IEmailRepo, EmailRepo>();
+            //builder.Services.AddScoped<IEmailService, EmailService>();
+            //builder.Services.AddScoped<IGenerateClient, GenerateSmtpClient>();
             builder.Services.AddServices(builder.Configuration);
             builder.Host.UseNLog();
             

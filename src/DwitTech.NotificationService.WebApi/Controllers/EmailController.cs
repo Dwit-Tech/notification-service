@@ -22,6 +22,7 @@ namespace DwitTech.NotificationService.WebApi.Controllers
 
             try
             {
+
                 var response = await _emailService.SendEmail(MailMessage);
                 return Ok(response);
             }

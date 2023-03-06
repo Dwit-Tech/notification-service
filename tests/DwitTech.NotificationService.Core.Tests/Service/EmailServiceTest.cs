@@ -7,45 +7,54 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-
-using Xunit.Sdk;
+using System.Net.Sockets;
 
 namespace DwitTech.NotificationService.Core.Tests.Service
 {
     public class EmailServiceTest 
     {
-        
-
-        [Fact]
-        public async Task SendEmail_ShouldReturn_BooleanResult()
+        private readonly IConfiguration _configuration;
+        public EmailServiceTest()
         {
+            _configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string> {
 
-            var options = new DbContextOptionsBuilder<NotificationDbContext>()
-               .UseInMemoryDatabase(Guid.NewGuid().ToString())
-               .Options;
-           
+                {"GmailInfo:Email", "johnokpo83@gmail.com"},
+                {"GmailInfo:Host", "smtp.gmail.com"},
+                {"GmailInfo:Port", "587"},
+                {"GmailInfo:AppPassword", "fyvdxxvlsvosecwg"},
 
-            var mockDbContext = new Mock<NotificationDbContext>(options);
-           
-            var configuration = new Mock<IConfiguration>();
-            var iLogger = new Mock<ILogger<EmailService>>();
-            var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
-
-            var emailDto = new EmailDto { From = "test@gmail.com", To = "jokpo2565@gmail.com", Body = "test values", Subject = "Going",  Cc ="", Bcc="" };
-
-
-            IEmailService emailService = new EmailService(configuration.Object, emailRepo.Object, iLogger.Object);
-            var res = await emailService.SendEmail(emailDto);
-            
-
-            Assert.True(res);
+            }).Build();
             
 
         }
 
+        [Fact]
+        
+        public async Task SendEmail_Returns_BooleanResult()
+        {
+            var iEmailRepoMock = new Mock<IEmailRepo>();
+            var iLogger = new Mock<ILogger<EmailService>>();
+            var iEmailService = new Mock<IEmailService>();
+            IEmailService emailService = new EmailService(_configuration, iEmailRepoMock.Object, iLogger.Object);
+
+            var emailDto = new EmailDto { From = "test@gmail.com", To = "jokpo2565@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "hhh", Bcc = "kllll" };
+
+            try
+            {
+                var act = await emailService.SendEmail(emailDto);
+                Assert.True(act);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+
+            
+        }
+
 
         [Fact]
-        public async Task SendEmail_Returns_AnExceptionOnFailure()
+        public async Task SendEmail_Returns_AnExceptionOnFailure_Due_NetworkConnection()
         {
 
             var options = new DbContextOptionsBuilder<NotificationDbContext>()
@@ -54,21 +63,19 @@ namespace DwitTech.NotificationService.Core.Tests.Service
 
 
             var mockDbContext = new Mock<NotificationDbContext>(options);
-            var configuration = new Mock<IConfiguration>();
             var iLogger = new Mock<ILogger<EmailService>>();
             var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
-
             var emailDto = new EmailDto { From = "test@gmail.com", To = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
 
+            IEmailService emailService = new EmailService(_configuration, emailRepo.Object, iLogger.Object);
 
-            IEmailService emailService = new EmailService(configuration.Object, emailRepo.Object, iLogger.Object);
-            
             async Task actual() => await emailService.SendEmail(emailDto);
 
-            await Assert.ThrowsAsync<NullReferenceException>(actual);
+            await Assert.ThrowsAsync<SocketException>(actual);
 
         }
 
+        
 
 
     }

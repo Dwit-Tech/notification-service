@@ -11,9 +11,11 @@ namespace DwitTech.NotificationService.Core.Dtos
 {
     public class EmailDto : Profile
     {
+        [EmailAddress]
         [Required]
         public string From { get; set; }
 
+        [EmailAddress]
         [Required]
         public string To { get; set; }
 

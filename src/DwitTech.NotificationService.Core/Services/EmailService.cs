@@ -2,10 +2,12 @@
 using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Data.Entities;
 using DwitTech.NotificationService.Data.Repository;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NLog;
-using System.Net.Mail;
+using MimeKit;
+using System.Net.Sockets;
 
 namespace DwitTech.NotificationService.Core.Services
 {
@@ -14,13 +16,13 @@ namespace DwitTech.NotificationService.Core.Services
         private readonly IConfiguration _config;
         private readonly IEmailRepo _emailRepo;
         private readonly ILogger<EmailService> _logger;
-
         
         public EmailService(IConfiguration config, IEmailRepo emailRepo, ILogger<EmailService> logger)
         {
             _config = config;
             _emailRepo = emailRepo;
             _logger = logger;
+            
         }
 
         public async Task<bool> SendEmail(EmailDto emailDto)
@@ -31,31 +33,25 @@ namespace DwitTech.NotificationService.Core.Services
             await _emailRepo.CreateEmail(emailModel);
             _logger.LogInformation(1, "The email has been inserted into the database");
 
-         try
+
+            var mail = new MimeMessage();
+            mail.To.Add(MailboxAddress.Parse(emailDto.To));
+            mail.From.Add(MailboxAddress.Parse(_config["GmailInfo:Email"]));
+            mail.Subject = emailDto.Subject;
+            mail.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = emailDto.Body };
+
+           
+            var client = GenerateSmtpClient();
+           
+            try
             {
-                MailMessage mail = new MailMessage();
-                mail.To.Add(emailDto.To);
-                mail.From = new MailAddress(_config["GmailInfo:Email"]);
-                mail.Subject = emailDto.Subject;
-                mail.Body = emailDto.Body;
-                mail.IsBodyHtml = true;
-
-                using (var SmtpClient = new SmtpClient())
-                {
-                    SmtpClient.Port = Int32.Parse(_config["GmailInfo:Port"]);
-                    SmtpClient.EnableSsl = true;
-                    SmtpClient.UseDefaultCredentials = false;
-                    SmtpClient.Host = _config["GmailInfo:Host"];
-                    SmtpClient.Credentials = new System.Net.NetworkCredential(_config["GmailInfo:Email"], _config["GmailInfo:AppPassword"]);
-                    await SmtpClient.SendMailAsync(mail);
-                }
-
-                
+                await client.SendAsync(mail);
+                client.Disconnect(true);
                 await _emailRepo.UpdateEmailStatus(emailModel, true);
                 _logger.LogInformation(2, "At this point the email status gets updated after successfully sending the email");
                 return true;
             }
-            catch (SmtpException ex)
+            catch (Exception ex) when (ex is SocketException)
             {
 
                 await _emailRepo.UpdateEmailStatus(emailModel, false);
@@ -66,7 +62,14 @@ namespace DwitTech.NotificationService.Core.Services
 
              
         }
-
+        
+        private SmtpClient GenerateSmtpClient()
+        {
+            var smtpClient = new SmtpClient();
+            smtpClient.Connect(_config["GmailInfo:Host"], Convert.ToInt32(_config["GmailInfo:Port"]), SecureSocketOptions.StartTls);
+            smtpClient.Authenticate(_config["GmailInfo:Email"], _config["GmailInfo:AppPassword"]);
+            return smtpClient;
+        }
         
     }
 }
