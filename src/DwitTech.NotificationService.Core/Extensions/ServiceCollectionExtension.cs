@@ -32,6 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 opt.UseNpgsql(connectionString, c => c.CommandTimeout(120));
 #if DEBUG
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 opt.EnableSensitiveDataLogging();
 #endif
             },
@@ -49,6 +50,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             service.AddScoped<IEmailRepo, EmailRepo>();
             service.AddScoped<IEmailService, EmailService>();
+            service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             return service;
         }
 

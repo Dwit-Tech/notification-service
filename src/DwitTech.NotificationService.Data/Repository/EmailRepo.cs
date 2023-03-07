@@ -34,25 +34,16 @@ namespace DwitTech.NotificationService.Data.Repository
             }
         }
 
-        public async Task UpdateEmailStatus(Email email, bool status)
+        public async Task UpdateEmail(Email email, bool status)
         {
             var emailModel = _notificationDbContext.Emails.FirstOrDefault(o => o.Id == email.Id);
 
             if(emailModel != null)
             {
-                if(!status)
-                {
-                    emailModel.Status = EmailStatus.Pending;
-                   await _notificationDbContext.SaveChangesAsync();
-                }
-
-
-                if (status)
-                {
-                    emailModel.Status = EmailStatus.Sent;
-                    await _notificationDbContext.SaveChangesAsync();
-                }
-
+                emailModel.Status =  status ?  EmailStatus.Sent : EmailStatus.Pending;
+                _notificationDbContext.Update(emailModel);
+                await _notificationDbContext.SaveChangesAsync();
+                
             }
         }
 

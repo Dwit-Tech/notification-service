@@ -11,7 +11,7 @@ namespace DwitTech.NotificationService.Data.Repository
     {
         
         Task<bool> CreateEmail(Email email);
-        Task UpdateEmailStatus(Email email, bool status);
+        Task UpdateEmail(Email email, bool status);
         
     }
 }

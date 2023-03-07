@@ -1,4 +1,5 @@
-﻿using DwitTech.NotificationService.Core.Dtos;
+﻿using AutoMapper;
+using DwitTech.NotificationService.Core.Dtos;
 using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Data.Entities;
 using DwitTech.NotificationService.Data.Repository;
@@ -16,20 +17,22 @@ namespace DwitTech.NotificationService.Core.Services
         private readonly IConfiguration _config;
         private readonly IEmailRepo _emailRepo;
         private readonly ILogger<EmailService> _logger;
-        
-        public EmailService(IConfiguration config, IEmailRepo emailRepo, ILogger<EmailService> logger)
+        private readonly IMapper _mapper;
+        public EmailService(IConfiguration config, IEmailRepo emailRepo, ILogger<EmailService> logger, IMapper mapper)
         {
             _config = config;
             _emailRepo = emailRepo;
             _logger = logger;
+            _mapper = mapper;
             
         }
 
         public async Task<bool> SendEmail(EmailDto emailDto)
         {
-            
-            var emailModel = new Email { From = emailDto.From, To = emailDto.To, Subject = emailDto.Subject, Body = emailDto.Body, Cc = emailDto.Cc , Bcc = emailDto.Bcc  };
 
+            var emailModel = _mapper.Map<Email>(emailDto);
+
+          
             await _emailRepo.CreateEmail(emailModel);
             _logger.LogInformation(1, "The email has been inserted into the database");
 
@@ -47,14 +50,14 @@ namespace DwitTech.NotificationService.Core.Services
             {
                 await client.SendAsync(mail);
                 client.Disconnect(true);
-                await _emailRepo.UpdateEmailStatus(emailModel, true);
+                await _emailRepo.UpdateEmail(emailModel, true);
                 _logger.LogInformation(2, "At this point the email status gets updated after successfully sending the email");
                 return true;
             }
             catch (Exception ex) when (ex is SocketException)
             {
 
-                await _emailRepo.UpdateEmailStatus(emailModel, false);
+                await _emailRepo.UpdateEmail(emailModel, false);
                 _logger.LogError(3, $"This is the log that is called if for any reason the email sending process fails due to {ex.Message}");
                 return false;   
             }
