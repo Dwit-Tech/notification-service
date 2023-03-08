@@ -1,4 +1,5 @@
-﻿using DwitTech.NotificationService.Core.Dtos;
+﻿using AutoMapper;
+using DwitTech.NotificationService.Core.Dtos;
 using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Core.Services;
 using DwitTech.NotificationService.Data.Context;
@@ -35,7 +36,8 @@ namespace DwitTech.NotificationService.Core.Tests.Service
             var iEmailRepoMock = new Mock<IEmailRepo>();
             var iLogger = new Mock<ILogger<EmailService>>();
             var iEmailService = new Mock<IEmailService>();
-            IEmailService emailService = new EmailService(_configuration, iEmailRepoMock.Object, iLogger.Object);
+            var iMapper = new Mock<IMapper>();
+            IEmailService emailService = new EmailService(_configuration, iEmailRepoMock.Object, iLogger.Object, iMapper.Object);
 
             var emailDto = new EmailDto { From = "test@gmail.com", To = "jokpo2565@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "hhh", Bcc = "kllll" };
 
@@ -66,8 +68,9 @@ namespace DwitTech.NotificationService.Core.Tests.Service
             var iLogger = new Mock<ILogger<EmailService>>();
             var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
             var emailDto = new EmailDto { From = "test@gmail.com", To = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
+            var iMapper = new Mock<IMapper>();
 
-            IEmailService emailService = new EmailService(_configuration, emailRepo.Object, iLogger.Object);
+            IEmailService emailService = new EmailService(_configuration, emailRepo.Object, iLogger.Object, iMapper.Object);
 
             async Task actual() => await emailService.SendEmail(emailDto);
 
