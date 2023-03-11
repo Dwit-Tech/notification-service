@@ -65,7 +65,7 @@ namespace DwitTech.NotificationService.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Emails");
+                    b.ToTable("Emails", (string)null);
                 });
 #pragma warning restore 612, 618
         }

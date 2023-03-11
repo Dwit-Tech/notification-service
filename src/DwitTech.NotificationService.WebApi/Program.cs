@@ -1,3 +1,10 @@
+using DwitTech.NotificationService.Core.Interfaces;
+using DwitTech.NotificationService.Core.Services;
+using DwitTech.NotificationService.Data.Context;
+using DwitTech.NotificationService.Data.Repository;
+using NLog;
+using NLog.Fluent;
+using NLog.Web;
 using System.Text.Json.Serialization;
 
 namespace DwitTech.NotificationService.WebApi
@@ -6,6 +13,8 @@ namespace DwitTech.NotificationService.WebApi
     {
         public static void Main(string[] args)
         {
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();    
+               
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -24,17 +33,21 @@ namespace DwitTech.NotificationService.WebApi
                     };
                 })
                 .AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
-
+                
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
             builder.Services.AddDatabaseService(builder.Configuration);
 
-            builder.Services.AddEndpointsApiExplorer();
+            //builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGenNewtonsoftSupport();
             builder.Services.AddHealthChecks();
+            //builder.Services.AddScoped<IEmailRepo, EmailRepo>();
+            //builder.Services.AddScoped<IEmailService, EmailService>();
+            //builder.Services.AddScoped<IGenerateClient, GenerateSmtpClient>();
             builder.Services.AddServices(builder.Configuration);
-
+            builder.Host.UseNLog();
+            
             // Add service and create Policy with options
             builder.Services.AddCors(options =>
             {
@@ -59,6 +72,7 @@ namespace DwitTech.NotificationService.WebApi
             app.UseSwagger();
             app.UseSwaggerUI();
 
+           
 
             app.UseHttpsRedirection();
 

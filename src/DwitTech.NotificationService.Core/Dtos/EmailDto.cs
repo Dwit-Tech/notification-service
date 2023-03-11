@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 
 namespace DwitTech.NotificationService.Core.Dtos
 {
+    [AutoMap(typeof(Email), ReverseMap = true)]
     public class EmailDto : Profile
     {
+        [EmailAddress]
         [Required]
         public string From { get; set; }
 
+        [EmailAddress]
         [Required]
         public string To { get; set; }
 
@@ -27,5 +30,6 @@ namespace DwitTech.NotificationService.Core.Dtos
         public string Body { get; set; }
 
         public EmailStatus Status { get; set; }
+
     }
 }

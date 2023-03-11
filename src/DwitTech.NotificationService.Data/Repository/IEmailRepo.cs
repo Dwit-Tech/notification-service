@@ -10,5 +10,8 @@ namespace DwitTech.NotificationService.Data.Repository
     public interface IEmailRepo
     {
         
+        Task<bool> CreateEmail(Email email);
+        Task UpdateEmail(Email email, bool status);
+        
     }
 }

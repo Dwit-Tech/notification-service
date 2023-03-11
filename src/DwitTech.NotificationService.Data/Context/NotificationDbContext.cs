@@ -14,6 +14,7 @@ namespace DwitTech.NotificationService.Data.Context
 {
     public class NotificationDbContext : DbContext
     {
+
         public NotificationDbContext(DbContextOptions<NotificationDbContext> options) : base(options)
         {
         }

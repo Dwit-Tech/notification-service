@@ -1,4 +1,7 @@
-﻿using DwitTech.NotificationService.Data.Context;
+﻿using DwitTech.NotificationService.Core.Interfaces;
+using DwitTech.NotificationService.Core.Services;
+using DwitTech.NotificationService.Data.Context;
+using DwitTech.NotificationService.Data.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,16 +27,18 @@ namespace Microsoft.Extensions.DependencyInjection
             connectionString = connectionString.Replace("{DBUser}", configuration["DB_USERNAME"]);
             connectionString = connectionString.Replace("{DBPassword}", configuration["DB_PASSWORD"]);
 
+
             service.AddDbContext<NotificationDbContext>(opt =>
             {
                 opt.UseNpgsql(connectionString, c => c.CommandTimeout(120));
 #if DEBUG
+                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 opt.EnableSensitiveDataLogging();
 #endif
             },
             contextLifetime: ServiceLifetime.Scoped,
             optionsLifetime: ServiceLifetime.Scoped);
-
+            
 
             return service;
         }
@@ -41,6 +46,10 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddServices(this IServiceCollection service, IConfiguration configuration)
         {
 
+            service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            service.AddScoped<IEmailRepo, EmailRepo>();
+            service.AddScoped<IEmailService, EmailService>();
             service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             return service;
         }
