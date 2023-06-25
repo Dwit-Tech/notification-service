@@ -1,4 +1,7 @@
-﻿using DwitTech.NotificationService.Core.Interfaces;
+﻿using Confluent.Kafka;
+using Confluent.Kafka.DependencyInjection;
+using DwitTech.NotificationService.Core.Dtos;
+using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Core.Services;
 using DwitTech.NotificationService.Data.Context;
 using DwitTech.NotificationService.Data.Repository;
@@ -20,13 +23,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddDatabaseService(this IServiceCollection service, IConfiguration configuration)
         {
-
             string connectionString = configuration.GetConnectionString("NotificationDbContext");
             connectionString = connectionString.Replace("{DBHost}", configuration["DB_HOSTNAME"]);
             connectionString = connectionString.Replace("{DBName}", configuration["DB_NAME"]);
             connectionString = connectionString.Replace("{DBUser}", configuration["DB_USERNAME"]);
             connectionString = connectionString.Replace("{DBPassword}", configuration["DB_PASSWORD"]);
-
 
             service.AddDbContext<NotificationDbContext>(opt =>
             {
@@ -38,21 +39,42 @@ namespace Microsoft.Extensions.DependencyInjection
             },
             contextLifetime: ServiceLifetime.Scoped,
             optionsLifetime: ServiceLifetime.Scoped);
-            
 
             return service;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection service, IConfiguration configuration)
         {
-
             service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             service.AddScoped<IEmailRepo, EmailRepo>();
             service.AddScoped<IEmailService, EmailService>();
-            service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Add event consumer related dependencies
+            service.AddSingleton<EmailEventConsumer>();
+            service.AddSingleton(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+
+                var config = new ConsumerConfig
+                {
+                    BootstrapServers = configuration["BOOTSTRAP_SERVER"],
+                    GroupId = configuration["CONSUMER_GROUP_ID"],
+                    AutoOffsetReset = AutoOffsetReset.Earliest,
+                    EnableAutoCommit = false,
+                    SecurityProtocol = SecurityProtocol.SaslSsl,
+                    SaslMechanism = SaslMechanism.Plain,
+                    SaslUsername = configuration["API_KEY"],
+                    SaslPassword = configuration["API_SECRET"]
+                };
+
+                return config;
+            });
+
+            service.AddHostedService<EmailEventListener>();
             return service;
         }
+
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
@@ -76,6 +98,5 @@ namespace Microsoft.Extensions.DependencyInjection
                 };
             });
         }
-
     }
 }

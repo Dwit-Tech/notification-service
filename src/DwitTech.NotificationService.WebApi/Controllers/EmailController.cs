@@ -18,8 +18,6 @@ namespace DwitTech.NotificationService.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmail([FromBody] EmailDto MailMessage)
         {
-
-
             try
             {
 
@@ -30,7 +28,6 @@ namespace DwitTech.NotificationService.WebApi.Controllers
             {
                 return BadRequest($"Something went wrong, due to {ex.Message}, please try again");
             }
-
         }
     }
 }

@@ -21,14 +21,16 @@ namespace DwitTech.NotificationService.Data.Repository
 
         public async Task<bool> CreateEmail(Email email)
         {
-            if(email is null)
+            if (email is null)
                 throw new ArgumentException(nameof(email));
+
             try
             {
                 _notificationDbContext.Emails.Add(email);
                 await _notificationDbContext.SaveChangesAsync();
                 return true;
-            }catch(NullReferenceException ex)
+            }
+            catch (DbUpdateException)
             {
                 return false;
             }
@@ -46,8 +48,5 @@ namespace DwitTech.NotificationService.Data.Repository
                 
             }
         }
-
-        
-        
     }
 }
