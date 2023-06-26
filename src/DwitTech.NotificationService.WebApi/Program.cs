@@ -1,5 +1,4 @@
 using NLog;
-using NLog.Fluent;
 using NLog.Web;
 using System.Text.Json.Serialization;
 
@@ -73,7 +72,7 @@ namespace DwitTech.NotificationService.WebApi
 
             app.MapControllers();
 
-            app.SetupMigrations(app.Services, app.Configuration);
+            app.SetupMigrations(app.Services);
 
             app.Run();
         }

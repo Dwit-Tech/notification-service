@@ -51,27 +51,26 @@ namespace Microsoft.Extensions.DependencyInjection
             service.AddScoped<IEmailService, EmailService>();
 
             // Add event consumer related dependencies
-            service.AddSingleton<EmailEventConsumer>();
+
             service.AddSingleton(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
-
                 var config = new ConsumerConfig
                 {
-                    BootstrapServers = configuration["BOOTSTRAP_SERVER"],
-                    GroupId = configuration["CONSUMER_GROUP_ID"],
-                    AutoOffsetReset = AutoOffsetReset.Earliest,
-                    EnableAutoCommit = false,
-                    SecurityProtocol = SecurityProtocol.SaslSsl,
-                    SaslMechanism = SaslMechanism.Plain,
-                    SaslUsername = configuration["API_KEY"],
-                    SaslPassword = configuration["API_SECRET"]
+                    BootstrapServers = configuration["KafkaSettings:BootstrapServer"],
+                    GroupId = configuration["KafkaSettings:ConsumerGroupId"],
+                    AutoOffsetReset = Enum.Parse<AutoOffsetReset>(configuration["KafkaSettings:AutoOffsetReset"]),
+                    EnableAutoCommit = bool.Parse(configuration["KafkaSettings:EnableAutoCommit"]),
+                    SecurityProtocol = Enum.Parse<SecurityProtocol>(configuration["KafkaSettings:SecurityProtocol"]),
+                    SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KafkaSettings:SaslMechanism"]),
+                    SaslUsername = configuration["KafkaSettings:SaslUsername"],
+                    SaslPassword = configuration["KafkaSettings:SaslPassword"]
                 };
-
                 return config;
             });
 
-            service.AddHostedService<EmailEventListener>();
+            service.AddHostedService<EmailEventConsumer>();
+
             return service;
         }
 
