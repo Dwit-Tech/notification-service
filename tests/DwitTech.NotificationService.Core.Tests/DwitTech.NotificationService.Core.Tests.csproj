@@ -32,8 +32,4 @@
     <ProjectReference Include="..\..\src\DwitTech.NotificationService.Core\DwitTech.NotificationService.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Events\" />
-  </ItemGroup>
-
 </Project>

@@ -52,21 +52,21 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Add event consumer related dependencies
 
-            service.AddSingleton(provider =>
+            service.AddSingleton<IConsumer<Ignore, string>>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
                 var config = new ConsumerConfig
                 {
-                    BootstrapServers = configuration["KafkaSettings:BootstrapServer"],
-                    GroupId = configuration["KafkaSettings:ConsumerGroupId"],
-                    AutoOffsetReset = Enum.Parse<AutoOffsetReset>(configuration["KafkaSettings:AutoOffsetReset"]),
-                    EnableAutoCommit = bool.Parse(configuration["KafkaSettings:EnableAutoCommit"]),
-                    SecurityProtocol = Enum.Parse<SecurityProtocol>(configuration["KafkaSettings:SecurityProtocol"]),
-                    SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KafkaSettings:SaslMechanism"]),
-                    SaslUsername = configuration["KafkaSettings:SaslUsername"],
-                    SaslPassword = configuration["KafkaSettings:SaslPassword"]
+                    BootstrapServers = configuration["MESSAGE_BROKER_BOOTSTRAP_SERVERS"],
+                    GroupId = configuration["KAFKA_CONSUMER_GROUP_ID"],
+                    AutoOffsetReset = Enum.Parse<AutoOffsetReset>(configuration["KAFKA_AUTO_OFFSET_RESET"]),
+                    EnableAutoCommit = bool.Parse(configuration["KAFKA_ENABLE_AUTO_COMMIT"]),
+                    SecurityProtocol = Enum.Parse<SecurityProtocol>(configuration["KAFKA_SECURITY_PROTOCOL"]),
+                    SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KAFKA_SASL_MECHANISM"]),
+                    SaslUsername = configuration["KAFKA_SASL_USERNAME"],
+                    SaslPassword = configuration["KAFKA_SASL_PASSWORD"]
                 };
-                return config;
+                return new ConsumerBuilder<Ignore, string>(config).Build();
             });
 
             service.AddHostedService<EmailEventConsumer>();
