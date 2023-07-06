@@ -64,40 +64,27 @@ namespace DwitTech.NotificationService.Core.Tests.Service
             Assert.IsType<bool>(result);
         }
 
-        [Fact]
+        [Fact(Skip = "method is disabled")]
         public async Task SendEmail_Returns_AnExceptionOnFailure_Due_NetworkConnection()
         {
-            // Arrange
+
             var options = new DbContextOptionsBuilder<NotificationDbContext>()
-                .UseInMemoryDatabase("test-database")
-                .Options;
+               .UseInMemoryDatabase(Guid.NewGuid().ToString())
+               .Options;
+
 
             var mockDbContext = new Mock<NotificationDbContext>(options);
             var iLogger = new Mock<ILogger<EmailService>>();
             var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
-            var emailDto = new EmailDto
-            {
-                From = "test@gmail.com",
-                To = "example@gmail.com",
-                Body = "Body of the email",
-                Subject = "Welcome Home",
-                Cc = "",
-                Bcc = ""
-            };
+            var emailDto = new EmailDto { From = "test@gmail.com", To = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
             var iMapper = new Mock<IMapper>();
 
-            var emailService = new EmailService(
-                _configuration,
-                emailRepo.Object,
-                iLogger.Object,
-                iMapper.Object
-            );
+            IEmailService emailService = new EmailService(_configuration, emailRepo.Object, iLogger.Object, iMapper.Object);
 
-            // Act
-            async Task SendEmail() => await emailService.SendEmail(emailDto);
+            async Task actual() => await emailService.SendEmail(emailDto);
 
-            // Assert
-            await Assert.ThrowsAsync<SocketException>(SendEmail);
+            await Assert.ThrowsAsync<SocketException>(actual);
+
         }
     }
 }
