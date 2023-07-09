@@ -49,9 +49,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             service.AddScoped<IEmailRepo, EmailRepo>();
             service.AddScoped<IEmailService, EmailService>();
-
+            service.AddSingleton<CancellationTokenSource>();
             // Add event consumer related dependencies
-
+            service.AddScoped<IEmailConsumerService, EmailConsumerService>();
             service.AddSingleton<IConsumer<Ignore, string>>(provider =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();

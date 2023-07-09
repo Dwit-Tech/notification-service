@@ -17,22 +17,19 @@ namespace DwitTech.NotificationService.Core.Services
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly IConsumer<Ignore, string> _consumer;
-        private readonly IEmailConsumerService _emailConsumerService;
 
         public EmailEventConsumer(
             IConfiguration config,
             ILogger<EmailEventConsumer> logger,
             IServiceScopeFactory serviceScopeFactory,
             CancellationTokenSource cancellationTokenSource,
-            IConsumer<Ignore, string> consumer,
-            IEmailConsumerService emailConsumerService)
+            IConsumer<Ignore, string> consumer)
         {
             _config = config;
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
             _cancellationTokenSource = cancellationTokenSource;
             _consumer = consumer;
-            _emailConsumerService = emailConsumerService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
