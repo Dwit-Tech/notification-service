@@ -44,7 +44,7 @@ namespace DwitTech.NotificationService.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while consuming Kafka message");
+                _logger.LogInformation(ex, "Error occurred while consuming Kafka message");
                 throw;
             }
         }
