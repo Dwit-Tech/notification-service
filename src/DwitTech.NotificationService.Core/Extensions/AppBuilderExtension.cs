@@ -1,5 +1,6 @@
 ﻿using DwitTech.NotificationService.Data.Context;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -8,21 +9,19 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AppBuilderExtension
     {
-        public static IApplicationBuilder SetupMigrations(this IApplicationBuilder app, IServiceProvider service, IConfiguration configuration)
+        public static IApplicationBuilder SetupMigrations(this IApplicationBuilder app, IServiceProvider service)
         {
-            var logger = service.GetService<ILogger<NotificationDbContext>>();
+            using var scope = service.CreateScope();
+            var logger = scope.ServiceProvider.GetService<ILogger<NotificationDbContext>>();
 
             try
             {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = serviceScope.ServiceProvider.GetService<NotificationDbContext>();
-                    //context.Database.Migrate();
-                }
+                var context = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+                context.Database.Migrate();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message);
+                logger?.LogError(ex, ex.Message);
             }
 
             return app;

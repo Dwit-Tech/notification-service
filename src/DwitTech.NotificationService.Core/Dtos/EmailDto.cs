@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DwitTech.NotificationService.Core.Dtos
 {
     [AutoMap(typeof(Email), ReverseMap = true)]
-    public class EmailDto : Profile
+    public class EmailDto
     {
         [EmailAddress]
         [Required]

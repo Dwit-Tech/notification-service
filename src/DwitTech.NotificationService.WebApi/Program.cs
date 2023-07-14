@@ -1,9 +1,4 @@
-using DwitTech.NotificationService.Core.Interfaces;
-using DwitTech.NotificationService.Core.Services;
-using DwitTech.NotificationService.Data.Context;
-using DwitTech.NotificationService.Data.Repository;
 using NLog;
-using NLog.Fluent;
 using NLog.Web;
 using System.Text.Json.Serialization;
 
@@ -13,8 +8,8 @@ namespace DwitTech.NotificationService.WebApi
     {
         public static void Main(string[] args)
         {
-            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();    
-               
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -24,7 +19,6 @@ namespace DwitTech.NotificationService.WebApi
                 {
                     // To preserve the default behavior, capture the original delegate to call later.
                     var builtInFactory = options.InvalidModelStateResponseFactory;
-
                     options.InvalidModelStateResponseFactory = context =>
                     {
                         var logger = context.HttpContext.RequestServices
@@ -33,7 +27,7 @@ namespace DwitTech.NotificationService.WebApi
                     };
                 })
                 .AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
-                
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
             builder.Services.AddDatabaseService(builder.Configuration);
@@ -42,12 +36,9 @@ namespace DwitTech.NotificationService.WebApi
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGenNewtonsoftSupport();
             builder.Services.AddHealthChecks();
-            //builder.Services.AddScoped<IEmailRepo, EmailRepo>();
-            //builder.Services.AddScoped<IEmailService, EmailService>();
-            //builder.Services.AddScoped<IGenerateClient, GenerateSmtpClient>();
             builder.Services.AddServices(builder.Configuration);
             builder.Host.UseNLog();
-            
+
             // Add service and create Policy with options
             builder.Services.AddCors(options =>
             {
@@ -70,18 +61,18 @@ namespace DwitTech.NotificationService.WebApi
             app.MapHealthChecks("/health");
 
             app.UseSwagger();
-            app.UseSwaggerUI();
-
-           
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            });
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
-            app.SetupMigrations(app.Services, app.Configuration);
+            app.SetupMigrations(app.Services);
 
             app.Run();
         }

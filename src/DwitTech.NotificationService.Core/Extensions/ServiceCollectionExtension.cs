@@ -1,4 +1,7 @@
-﻿using DwitTech.NotificationService.Core.Interfaces;
+﻿using Confluent.Kafka;
+using Confluent.Kafka.DependencyInjection;
+using DwitTech.NotificationService.Core.Dtos;
+using DwitTech.NotificationService.Core.Interfaces;
 using DwitTech.NotificationService.Core.Services;
 using DwitTech.NotificationService.Data.Context;
 using DwitTech.NotificationService.Data.Repository;
@@ -20,13 +23,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddDatabaseService(this IServiceCollection service, IConfiguration configuration)
         {
-
             string connectionString = configuration.GetConnectionString("NotificationDbContext");
             connectionString = connectionString.Replace("{DBHost}", configuration["DB_HOSTNAME"]);
             connectionString = connectionString.Replace("{DBName}", configuration["DB_NAME"]);
             connectionString = connectionString.Replace("{DBUser}", configuration["DB_USERNAME"]);
             connectionString = connectionString.Replace("{DBPassword}", configuration["DB_PASSWORD"]);
-
 
             service.AddDbContext<NotificationDbContext>(opt =>
             {
@@ -38,21 +39,41 @@ namespace Microsoft.Extensions.DependencyInjection
             },
             contextLifetime: ServiceLifetime.Scoped,
             optionsLifetime: ServiceLifetime.Scoped);
-            
 
             return service;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection service, IConfiguration configuration)
         {
-
             service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             service.AddScoped<IEmailRepo, EmailRepo>();
             service.AddScoped<IEmailService, EmailService>();
-            service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            service.AddSingleton<CancellationTokenSource>();
+            // Add event consumer related dependencies
+            service.AddScoped<IEmailConsumerService, EmailConsumerService>();
+            service.AddSingleton<IConsumer<Ignore, string>>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                var config = new ConsumerConfig
+                {
+                    BootstrapServers = configuration["MESSAGE_BROKER_BOOTSTRAP_SERVERS"],
+                    GroupId = configuration["KAFKA_CONSUMER_GROUP_ID"],
+                    AutoOffsetReset = Enum.Parse<AutoOffsetReset>(configuration["KAFKA_AUTO_OFFSET_RESET"]),
+                    EnableAutoCommit = bool.Parse(configuration["KAFKA_ENABLE_AUTO_COMMIT"]),
+                    SecurityProtocol = Enum.Parse<SecurityProtocol>(configuration["KAFKA_SECURITY_PROTOCOL"]),
+                    SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KAFKA_SASL_MECHANISM"]),
+                    SaslUsername = configuration["KAFKA_SASL_USERNAME"],
+                    SaslPassword = configuration["KAFKA_SASL_PASSWORD"]
+                };
+                return new ConsumerBuilder<Ignore, string>(config).Build();
+            });
+
+            service.AddHostedService<EmailEventConsumer>();
+
             return service;
         }
+
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
@@ -76,6 +97,5 @@ namespace Microsoft.Extensions.DependencyInjection
                 };
             });
         }
-
     }
 }
