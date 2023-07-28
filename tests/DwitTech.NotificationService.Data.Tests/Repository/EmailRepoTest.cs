@@ -47,8 +47,8 @@ namespace DwitTech.NotificationService.Data.Tests.Repository
             var emailModel = new Email { 
                             Id = 1, 
                             Body = "Email Body", 
-                            From = "test@gmail.com", 
-                            To = "example@gmail.com", 
+                            FromEmail = "test@gmail.com", 
+                            ToEmail = "example@gmail.com", 
                             Subject = "Welcome Home", 
                             Status = EmailStatus.Pending, 
                             Cc = "", 

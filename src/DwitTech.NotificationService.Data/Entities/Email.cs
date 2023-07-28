@@ -12,14 +12,14 @@ namespace DwitTech.NotificationService.Data.Entities
 
         
         [Required]
-        public string From { get; set; }
+        public string FromEmail { get; set; }
 
         [Required]
-        public string To { get; set; }
+        public string ToEmail { get; set; }
 
-        public string Bcc { get; set; }
+        public string? Bcc { get; set; }
 
-        public string Cc { get; set; }
+        public string? Cc { get; set; }
 
         [Required]
         public string Subject { get; set; }

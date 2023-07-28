@@ -14,11 +14,11 @@ namespace DwitTech.NotificationService.Core.Dtos
     {
         [EmailAddress]
         [Required]
-        public string From { get; set; }
+        public string FromEmail { get; set; }
 
         [EmailAddress]
         [Required]
-        public string To { get; set; }
+        public string ToEmail { get; set; }
 
         public string Bcc { get; set; }
 
