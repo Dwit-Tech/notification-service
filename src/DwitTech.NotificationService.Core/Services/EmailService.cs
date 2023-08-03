@@ -37,8 +37,8 @@ namespace DwitTech.NotificationService.Core.Services
             _logger.LogInformation(1, "The email has been inserted into the database");
 
             var mail = new MimeMessage();
-            mail.To.Add(MailboxAddress.Parse(emailDto.To));
-            mail.From.Add(MailboxAddress.Parse(_config["GmailInfo:Email"]));
+            mail.To.Add(MailboxAddress.Parse(emailDto.ToEmail));
+            mail.From.Add(MailboxAddress.Parse(_config["GMAIL_INFO:EMAIL"]));
             mail.Subject = emailDto.Subject;
             mail.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = emailDto.Body };
 
@@ -65,10 +65,10 @@ namespace DwitTech.NotificationService.Core.Services
             var smtpClient = new SmtpClient();
 
             // Retrieve SMTP client configuration values from appsettings.json
-            var host = _config["GmailInfo:Host"];
-            var port = Convert.ToInt32(_config["GmailInfo:Port"]);
-            var email = _config["GmailInfo:Email"];
-            var password = _config["GmailInfo:Password"];
+            var host = _config["GMAIL_INFO:HOST"];
+            var port = Convert.ToInt32(_config["GMAIL_INFO:PASSWORD"]);
+            var email = _config["GMAIL_INFO:EMAIL"];
+            var password = _config["GMAIL_INFO:APP_PASSWORD"];
 
             smtpClient.Connect(host, port, SecureSocketOptions.Auto);
             smtpClient.Authenticate(email, password);

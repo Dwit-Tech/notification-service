@@ -34,7 +34,7 @@ namespace DwitTech.NotificationService.WebApi.Tests.Controller
                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                .Options;
 
-            var actual = new EmailDto { From = "test1", To = "rest", Subject = "Sample Subject", Body = "TestBody", Bcc = "", Cc = "" };
+            var actual = new EmailDto { FromEmail = "test1", ToEmail = "rest", Subject = "Sample Subject", Body = "TestBody", Bcc = "", Cc = "" };
 
             var _mockService = new Mock<IEmailService>();
 

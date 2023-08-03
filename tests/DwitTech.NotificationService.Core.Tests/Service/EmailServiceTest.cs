@@ -49,8 +49,8 @@ namespace DwitTech.NotificationService.Core.Tests.Service
 
             var emailDto = new EmailDto
             {
-                From = "test@gmail.com",
-                To = "jokpo2565@gmail.com",
+                FromEmail = "test@gmail.com",
+                ToEmail = "jokpo2565@gmail.com",
                 Body = "Body of the email",
                 Subject = "Welcome Home",
                 Cc = "hhh",
@@ -76,7 +76,7 @@ namespace DwitTech.NotificationService.Core.Tests.Service
             var mockDbContext = new Mock<NotificationDbContext>(options);
             var iLogger = new Mock<ILogger<EmailService>>();
             var emailRepo = new Mock<EmailRepo>(mockDbContext.Object);
-            var emailDto = new EmailDto { From = "test@gmail.com", To = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
+            var emailDto = new EmailDto { FromEmail = "test@gmail.com", ToEmail = "example@gmail.com", Body = "Body of the email", Subject = "Welcome Home", Cc = "", Bcc = "" };
             var iMapper = new Mock<IMapper>();
 
             IEmailService emailService = new EmailService(_configuration, emailRepo.Object, iLogger.Object, iMapper.Object);

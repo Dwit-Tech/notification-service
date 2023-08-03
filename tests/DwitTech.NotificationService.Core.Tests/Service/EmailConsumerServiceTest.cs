@@ -32,8 +32,8 @@ namespace DwitTech.NotificationService.Core.Tests.Services
 
             var emailDto = new EmailDto
             {
-                From = "test@gmail.com",
-                To = "jokpo2565@gmail.com",
+                FromEmail = "test@gmail.com",
+                ToEmail = "jokpo2565@gmail.com",
                 Body = "Body of the email",
                 Subject = "Welcome Home",
                 Cc = "hhh",

@@ -62,10 +62,27 @@ namespace Microsoft.Extensions.DependencyInjection
                     AutoOffsetReset = Enum.Parse<AutoOffsetReset>(configuration["KAFKA_AUTO_OFFSET_RESET"]),
                     EnableAutoCommit = bool.Parse(configuration["KAFKA_ENABLE_AUTO_COMMIT"]),
                     SecurityProtocol = Enum.Parse<SecurityProtocol>(configuration["KAFKA_SECURITY_PROTOCOL"]),
-                    SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KAFKA_SASL_MECHANISM"]),
-                    SaslUsername = configuration["KAFKA_SASL_USERNAME"],
-                    SaslPassword = configuration["KAFKA_SASL_PASSWORD"]
+
                 };
+
+                switch(config.SecurityProtocol)
+                {
+                    case null:
+                    case SecurityProtocol.Plaintext:
+                        break;
+                    case SecurityProtocol.Ssl:
+                        break;
+                    
+                    case SecurityProtocol.SaslSsl:
+                        config.SaslMechanism = Enum.Parse<SaslMechanism>(configuration["KAFKA_SASL_MECHANISM"]);
+                        config.SaslUsername = configuration["KAFKA_SASL_USERNAME"];
+                        config.SaslPassword = configuration["KAFKA_SASL_PASSWORD"];
+                        break;
+
+                    case SecurityProtocol.SaslPlaintext:
+                        throw new NotImplementedException($"Security Protocol {config.SecurityProtocol} is not implemented");
+                       
+                }
                 return new ConsumerBuilder<Ignore, string>(config).Build();
             });
 
